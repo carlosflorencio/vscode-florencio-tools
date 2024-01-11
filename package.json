@@ -1,7 +1,7 @@
 {
-  "name": "smart-window-manager",
-  "displayName": "smart-window-manager",
-  "description": "Automatically maximize the editors width with horizontal splits",
+  "name": "vscode-florencio-tools",
+  "displayName": "vscode-florencio-tools",
+  "description": "Some behaviours I was missing from neovim",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.85.0"
@@ -13,14 +13,7 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "smart-window-manager.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
+  "contributes": {},
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
