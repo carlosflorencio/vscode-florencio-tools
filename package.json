@@ -3,6 +3,11 @@
   "displayName": "vscode-florencio-tools",
   "description": "Some behaviours I was missing from neovim",
   "version": "0.0.1",
+  "publisher": "florencio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carlosflorencio/vscode-florencio-tools"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
