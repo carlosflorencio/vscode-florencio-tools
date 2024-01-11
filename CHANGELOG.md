@@ -1,9 +1,8 @@
 # Change Log
 
-All notable changes to the "smart-window-manager" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
 
-- Initial release
+## 0.0.1 - 2024-01-11
+
+### Added
+- Auto close sidebar when there are two open splits
