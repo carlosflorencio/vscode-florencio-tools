@@ -1,6 +1,10 @@
 import * as vscode from "vscode"
 
+let previousEditorsCount = 0
+
 export function activate(context: vscode.ExtensionContext) {
+  previousEditorsCount = vscode.window.visibleTextEditors.length
+
   context.subscriptions.push(
     vscode.window.onDidChangeVisibleTextEditors((editors) => {
       autoCloseSidebar(editors)
@@ -8,7 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
   )
 }
 
-let previousEditorsCount = 0
 
 // close the sidebar if there are two editors open side by side
 function autoCloseSidebar(editors: Readonly<vscode.TextEditor[]>) {
