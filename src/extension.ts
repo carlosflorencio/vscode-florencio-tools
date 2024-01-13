@@ -1,29 +1,30 @@
 import * as vscode from "vscode"
 
-let previousEditorsCount = 0
-
 export function activate(context: vscode.ExtensionContext) {
-  previousEditorsCount = vscode.window.visibleTextEditors.length
-
   context.subscriptions.push(
-    vscode.window.onDidChangeVisibleTextEditors((editors) => {
-      autoCloseSidebar(editors)
+    vscode.window.onDidChangeVisibleTextEditors(async () => {
+      await autoCloseSidebar()
     })
   )
 }
 
-
 // close the sidebar if there are two editors open side by side
-function autoCloseSidebar(editors: Readonly<vscode.TextEditor[]>) {
-  // opening side by side
-  if (editors.length === 2 && previousEditorsCount === 1) {
-    vscode.commands.executeCommand("workbench.action.closeSidebar")
-  }
+async function autoCloseSidebar() {
+  const tabGroups = vscode.window.tabGroups.all
 
-  // back to a single editor
-  if (editors.length === 1 && previousEditorsCount === 2) {
-    vscode.commands.executeCommand("workbench.action.toggleSidebarVisibility")
-  }
+  if (tabGroups.length > 1) {
+    // closing the split editor and opening the sidebar
+    if (tabGroups[1]?.tabs.length === 0) {
+      await vscode.commands.executeCommand(
+        "workbench.action.toggleSidebarVisibility"
+      )
+      return
+    }
 
-  previousEditorsCount = editors.length
+    // opening a split editor and closing the sidebar
+    if (tabGroups[1]?.tabs.length > 0) {
+      await vscode.commands.executeCommand("workbench.action.closeSidebar")
+      return
+    }
+  }
 }
