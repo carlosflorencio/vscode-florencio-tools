@@ -8,11 +8,22 @@ import {
 import { join } from "path"
 import { promises as fs } from "fs"
 
-// hack to allow multiple terminals simultaneously
+// Hack to allow having multiple terminals simultaneously
 let terminalCounter = 0
 
-const UTILITY_FILES_FOLDER = "/tmp"
+const TMP_FILES_FOLDER = "/tmp"
 
+/**
+ * A terminal wrapper that runs a single command and returns the output
+ * After the command runs, the terminal is closed
+ * 
+ * Since vscode doesn't provide an api to get the output of a terminal
+ * this class uses a hack to get the output of a terminal by writing the output
+ * to a file and then reading it
+ * 
+ * Correctly handles the terminal close action by the user
+ * (focus the previous editor and clean up the tmp files)
+ */
 export class SingleCommandTerminal {
   private terminal: Terminal
   private terminalId: number
@@ -50,10 +61,10 @@ export class SingleCommandTerminal {
     // hack to grab the command output while vscode
     // doesn't provide an api for it
     this.outputFile = join(
-      UTILITY_FILES_FOLDER,
+      TMP_FILES_FOLDER,
       `tmp-output-${this.terminalId}`
     )
-    this.doneFile = join(UTILITY_FILES_FOLDER, `tmp-done-${this.terminalId}`)
+    this.doneFile = join(TMP_FILES_FOLDER, `tmp-done-${this.terminalId}`)
   }
 
   public async run(cmd: string): Promise<string[]> {
@@ -79,7 +90,7 @@ export class SingleCommandTerminal {
           .filter((line) => line.length > 0)
       })
       .finally(() => {
-        // close the terminal
+        // close the terminal after running the command
         this.terminal.dispose()
       })
   }
@@ -93,7 +104,7 @@ export class SingleCommandTerminal {
       fs.rm(this.outputFile)
       fs.rm(this.doneFile)
     } catch (error) {
-      console.error("error deleting files:", error)
+      console.error("SingleCommandTerminal: error deleting files:", error)
     }
   }
 }

@@ -1,24 +1,39 @@
-import * as vscode from "vscode"
+import { autoCloseSidebar, goToDiagnostic } from "./editors"
 import { lazyGit, openFile, searchInFiles } from "./terminal-commands"
+import {
+  DiagnosticSeverity,
+  ExtensionContext,
+  commands,
+  window,
+} from "vscode"
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
   // commands
   context.subscriptions.push(
-    vscode.commands.registerCommand("florencio.openFiles", async () => {
+    commands.registerCommand("florencio.openFiles", async () => {
       await openFile(context.extensionPath)
-    })
-  )
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("florencio.searchInFiles", async () => {
+    }),
+    commands.registerCommand("florencio.searchInFiles", async () => {
       await searchInFiles(context.extensionPath)
+    }),
+    commands.registerCommand("florencio.lazygit", async () => {
+      await lazyGit()
     })
   )
 
-  
+  // jump to diagnostics
   context.subscriptions.push(
-    vscode.commands.registerCommand("florencio.lazygit", async () => {
-      await lazyGit()
+    commands.registerCommand("florencio.goToNextError", async () => {
+      await goToDiagnostic(DiagnosticSeverity.Error, "next")
+    }),
+    commands.registerCommand("florencio.goToPreviousError", async () => {
+      await goToDiagnostic(DiagnosticSeverity.Error, "prev")
+    }),
+    commands.registerCommand("florencio.goToNextDiagnostic", async () => {
+      await goToDiagnostic(DiagnosticSeverity.Error, "next", true)
+    }),
+    commands.registerCommand("florencio.goToPreviousDiagnostic", async () => {
+      await goToDiagnostic(DiagnosticSeverity.Error, "prev", true)
     })
   )
 
@@ -26,29 +41,8 @@ export function activate(context: vscode.ExtensionContext) {
   // TODO: change this event to when an editor tab group is open or closed
   // TODO: add config to enable/disable this feature
   context.subscriptions.push(
-    vscode.window.onDidChangeVisibleTextEditors(async () => {
+    window.onDidChangeVisibleTextEditors(async () => {
       await autoCloseSidebar()
     })
   )
-}
-
-// close the sidebar if there are two editors open side by side
-async function autoCloseSidebar() {
-  const tabGroups = vscode.window.tabGroups.all
-
-  if (tabGroups.length > 1) {
-    // closing the split editor and opening the sidebar
-    if (tabGroups[1]?.tabs.length === 0) {
-      await vscode.commands.executeCommand(
-        "workbench.action.toggleSidebarVisibility"
-      )
-      return
-    }
-
-    // opening a split editor and closing the sidebar
-    if (tabGroups[1]?.tabs.length > 0) {
-      await vscode.commands.executeCommand("workbench.action.closeSidebar")
-      return
-    }
-  }
 }

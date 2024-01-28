@@ -2,6 +2,13 @@ import { workspace, commands, window, Uri, Range } from "vscode"
 import { SingleCommandTerminal } from "./terminal"
 import { join } from "path"
 
+/**
+ * Open a fuzzy finder (rg + fzf) to open files
+ * File preview with bat
+ * Supports opening multiple files
+ * 
+ * Opens as an editor terminal
+ */
 export async function openFile(extensionPath: string) {
   const scriptPath = join(extensionPath, "scripts", "find_files.sh")
   const cwd = workspace.workspaceFolders?.[0].uri.fsPath
@@ -39,6 +46,13 @@ export async function openFile(extensionPath: string) {
   }
 }
 
+/**
+ * Find contents in files using rg + fzf
+ * File preview with bat
+ * Supports opening multiple files
+ * 
+ * Opens as an editor terminal
+ */
 export async function searchInFiles(extensionPath: string) {
   const scriptPath = join(extensionPath, "scripts", "find_in_files.sh")
 
@@ -82,6 +96,9 @@ export async function searchInFiles(extensionPath: string) {
   }
 }
 
+/**
+ * Opens a terminal with lazygit maximized
+ */
 export async function lazyGit() {
   const previousEditor = window.activeTextEditor
 

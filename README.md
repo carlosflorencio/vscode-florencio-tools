@@ -8,6 +8,7 @@ VSCode extension with some behaviours I was missing from neovim.
 - Telescope: Find files
 - Telescope: Find in files
 - Lazygit
+- Jump to editor diagnostics faster
 
 ## Requirements
 
