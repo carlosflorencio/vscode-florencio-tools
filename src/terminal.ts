@@ -1,8 +1,9 @@
 import {
-  Disposable, Terminal,
+  Disposable,
+  Terminal,
   TerminalLocation,
   TerminalOptions,
-  window
+  window,
 } from "vscode"
 import { join } from "path"
 import { promises as fs } from "fs"
@@ -31,6 +32,15 @@ export class SingleCommandTerminal {
       window.onDidCloseTerminal((e) => {
         if (e.name === this.terminal.name) {
           this.dispose()
+        }
+      })
+    )
+
+    // fix the first time opening the terminal it doens't get focus
+    this.disposables.push(
+      window.onDidChangeTerminalState((e) => {
+        if(e.name === this.terminal.name && e.state.isInteractedWith) {
+          window.activeTerminal?.show()
         }
       })
     )
