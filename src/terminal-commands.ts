@@ -106,7 +106,10 @@ export async function lazyGit() {
     name: "lazygit",
   })
 
-  const cmd = "lazygit"
+  // for some reason, sometimes lazygit doesn't find the right config file
+  // let's force it
+  const config = '~/.config/lazygit/config.yml'
+  const cmd = `lazygit -ucf ${config}`
 
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
 
