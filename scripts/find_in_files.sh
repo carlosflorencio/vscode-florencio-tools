@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# received scripts folder path
 CURRENT_FOLDER_PATH=$(dirname "$0")
 
 rm -f /tmp/rg-fzf-{r,f}
