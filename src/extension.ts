@@ -1,5 +1,5 @@
 import { autoCloseSidebar, goToDiagnostic } from "./editors"
-import { lazyGit, openFile, searchInFiles } from "./terminal-commands"
+import { lazyGit, openChangedFiles, openFile, searchInFiles } from "./terminal-commands"
 import {
   DiagnosticSeverity,
   ExtensionContext,
@@ -12,6 +12,9 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand("florencio.openFiles", async () => {
       await openFile(context.extensionPath)
+    }),
+    commands.registerCommand("florencio.openChangedFiles", async () => {
+      await openChangedFiles(context.extensionPath)
     }),
     commands.registerCommand("florencio.searchInFiles", async () => {
       await searchInFiles(context.extensionPath)

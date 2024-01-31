@@ -15,35 +15,23 @@ export async function openFile(extensionPath: string) {
     return
   }
 
-  const scriptPath = join(extensionPath, "scripts", "find_files.sh")
-  const cwd = workspace.workspaceFolders![0].uri.fsPath
-  const previousEditor = window.activeTextEditor
+  return runScriptOpensManyFiles(extensionPath, "find_files.sh")
+}
 
-  const terminal = new SingleCommandTerminal({
-    name: "openFile",
-  })
-
-  const cmd = `sh ${scriptPath}`
-
-  const result = await terminal.run(cmd.trim())
-
-  if (result.length > 0) {
-    const filesToOpen = result.map((f) => Uri.file(join(cwd, f)))
-    const promises = filesToOpen.map((f) => workspace.openTextDocument(f))
-    const docs = await Promise.all(promises)
-
-    for (const doc of docs) {
-      await window.showTextDocument(doc, { preview: docs.length === 1 })
-    }
-  } else {
-    // Focus the previous editor
-    if (previousEditor) {
-      await window.showTextDocument(
-        previousEditor.document,
-        previousEditor.viewColumn
-      )
-    }
+/**
+ * Open a fuzzy finder (rg + fzf) to open git changed files
+ * File preview with bat
+ * Supports opening multiple files
+ *
+ * Opens as an editor terminal
+ */
+export async function openChangedFiles(extensionPath: string) {
+  if (!isLocalWorkspaceFolder()) {
+    // no equivalent fallback command
+    return
   }
+
+  return runScriptOpensManyFiles(extensionPath, "find_files_git.sh")
 }
 
 /**
@@ -128,6 +116,42 @@ export async function lazyGit() {
       previousEditor.document,
       previousEditor.viewColumn
     )
+  }
+}
+
+/**
+ * Runs a script that can open many files
+ */
+async function runScriptOpensManyFiles(extensionPath: string, scriptName: string) {
+  const scriptPath = join(extensionPath, "scripts", scriptName)
+
+  const cwd = workspace.workspaceFolders![0].uri.fsPath
+  const previousEditor = window.activeTextEditor
+
+  const terminal = new SingleCommandTerminal({
+    name: `openFiles - ${scriptName}`,
+  })
+
+  const cmd = `sh ${scriptPath}`
+
+  const result = await terminal.run(cmd.trim())
+
+  if (result.length > 0) {
+    const filesToOpen = result.map((f) => Uri.file(join(cwd, f)))
+    const promises = filesToOpen.map((f) => workspace.openTextDocument(f))
+    const docs = await Promise.all(promises)
+
+    for (const doc of docs) {
+      await window.showTextDocument(doc, { preview: docs.length === 1 })
+    }
+  } else {
+    // Focus the previous editor
+    if (previousEditor) {
+      await window.showTextDocument(
+        previousEditor.document,
+        previousEditor.viewColumn
+      )
+    }
   }
 }
 
