@@ -6,18 +6,18 @@ import { join } from "path"
  * Open a fuzzy finder (rg + fzf) to open files
  * File preview with bat
  * Supports opening multiple files
- * 
+ *
  * Opens as an editor terminal
  */
 export async function openFile(extensionPath: string) {
-  const scriptPath = join(extensionPath, "scripts", "find_files.sh")
-  const cwd = workspace.workspaceFolders?.[0].uri.fsPath
-  const previousEditor = window.activeTextEditor
-
-  if (!cwd) {
-    window.showErrorMessage("No workspace folder found")
+  if (!isLocalWorkspaceFolder()) {
+    commands.executeCommand("workbench.action.quickOpen")
     return
   }
+
+  const scriptPath = join(extensionPath, "scripts", "find_files.sh")
+  const cwd = workspace.workspaceFolders![0].uri.fsPath
+  const previousEditor = window.activeTextEditor
 
   const terminal = new SingleCommandTerminal({
     name: "openFile",
@@ -50,19 +50,19 @@ export async function openFile(extensionPath: string) {
  * Find contents in files using rg + fzf
  * File preview with bat
  * Supports opening multiple files
- * 
+ *
  * Opens as an editor terminal
  */
 export async function searchInFiles(extensionPath: string) {
-  const scriptPath = join(extensionPath, "scripts", "find_in_files.sh")
-
-  const cwd = workspace.workspaceFolders?.[0].uri.fsPath
-  const previousEditor = window.activeTextEditor
-
-  if (!cwd) {
-    window.showErrorMessage("No workspace folder found")
+  if (!isLocalWorkspaceFolder()) {
+    commands.executeCommand("workbench.action.experimental.quickTextSearch")
     return
   }
+
+  const scriptPath = join(extensionPath, "scripts", "find_in_files.sh")
+
+  const cwd = workspace.workspaceFolders![0].uri.fsPath
+  const previousEditor = window.activeTextEditor
 
   const terminal = new SingleCommandTerminal({
     name: "searchInFiles",
@@ -100,6 +100,11 @@ export async function searchInFiles(extensionPath: string) {
  * Opens a terminal with lazygit maximized
  */
 export async function lazyGit() {
+  if (!isLocalWorkspaceFolder()) {
+    commands.executeCommand("workbench.view.scm")
+    return
+  }
+
   const previousEditor = window.activeTextEditor
 
   const terminal = new SingleCommandTerminal({
@@ -108,7 +113,7 @@ export async function lazyGit() {
 
   // for some reason, sometimes lazygit doesn't find the right config file
   // let's force it
-  const config = '~/.config/lazygit/config.yml'
+  const config = "~/.config/lazygit/config.yml"
   const cmd = `lazygit -ucf ${config}`
 
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
@@ -124,4 +129,17 @@ export async function lazyGit() {
       previousEditor.viewColumn
     )
   }
+}
+
+/**
+ * Determines if the workspace folder is local
+ * vscode supports remote filesystems
+ */
+function isLocalWorkspaceFolder() {
+  if (workspace.workspaceFolders?.length === 0) {
+    window.showErrorMessage("No workspace folder found")
+    return false
+  }
+
+  return workspace.workspaceFolders?.[0].uri.scheme === "file"
 }
