@@ -58,7 +58,9 @@ export async function searchInFiles(extensionPath: string) {
 
   const cmd = `sh ${scriptPath}`
 
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
   const result = await terminal.run(cmd.trim())
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
 
   if (result.length > 0) {
     // open files
@@ -109,6 +111,9 @@ export async function lazyGit() {
   await terminal.run(cmd)
 
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  
+  // refresh vscode git file status (modified, committed, etc..)
+  await commands.executeCommand("git.refresh")
 
   // Focus the previous editor
   if (previousEditor) {
@@ -134,7 +139,9 @@ async function runScriptOpensManyFiles(extensionPath: string, scriptName: string
 
   const cmd = `sh ${scriptPath}`
 
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
   const result = await terminal.run(cmd.trim())
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
 
   if (result.length > 0) {
     const filesToOpen = result.map((f) => Uri.file(join(cwd, f)))
