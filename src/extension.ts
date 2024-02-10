@@ -1,4 +1,5 @@
 import { autoCloseSidebar, goToDiagnostic } from "./editors"
+import { peekComplete } from "./peek"
 import { lazyGit, openChangedFiles, openFile, searchInFiles } from "./terminal-commands"
 import {
   DiagnosticSeverity,
@@ -21,6 +22,9 @@ export function activate(context: ExtensionContext) {
     }),
     commands.registerCommand("florencio.lazygit", async () => {
       await lazyGit()
+    }),
+    commands.registerCommand("florencio.peekComplete", async () => {
+      await peekComplete()
     })
   )
 
