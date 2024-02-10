@@ -1,6 +1,6 @@
 import { autoCloseSidebar, goToDiagnostic } from "./editors"
 import { peekComplete } from "./peek"
-import { lazyGit, openChangedFiles, openFile, searchInFiles } from "./terminal-commands"
+import { lazyGit, openChangedFiles, openFile, runCommandForCurrentFile, searchInFiles } from "./terminal-commands"
 import {
   DiagnosticSeverity,
   ExtensionContext,
@@ -25,6 +25,9 @@ export function activate(context: ExtensionContext) {
     }),
     commands.registerCommand("florencio.peekComplete", async () => {
       await peekComplete()
+    }),
+    commands.registerCommand("florencio.fx", async () => {
+      await runCommandForCurrentFile("fx")
     })
   )
 

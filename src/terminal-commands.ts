@@ -87,6 +87,40 @@ export async function searchInFiles(extensionPath: string) {
 }
 
 /**
+ * Runs a terminal command passing the current file as an argument
+ */
+export async function runCommandForCurrentFile(command: string) {
+  if (!isLocalWorkspaceFolder()) {
+    window.showInformationMessage("Not a local workspace folder")
+    return
+  }
+  
+  if(!command) {
+    window.showInformationMessage("No command provided")
+    return
+  }
+
+  const currentEditorFilePath = window.activeTextEditor?.document.fileName
+
+  if (!currentEditorFilePath) {
+    window.showInformationMessage("No active file")
+    return
+  }
+
+  const previousEditor = window.activeTextEditor
+
+  const terminal = new SingleCommandTerminal({
+    name: "runCommandForCurrentFile",
+  })
+
+  const cmd = `${command} ${currentEditorFilePath}`
+
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await terminal.runWithoutOutput(cmd.trim())
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+}
+
+/**
  * Opens a terminal with lazygit maximized
  */
 export async function lazyGit() {
@@ -111,7 +145,7 @@ export async function lazyGit() {
   await terminal.run(cmd)
 
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
-  
+
   // refresh vscode git file status (modified, committed, etc..)
   await commands.executeCommand("git.refresh")
 
@@ -127,7 +161,10 @@ export async function lazyGit() {
 /**
  * Runs a script that can open many files
  */
-async function runScriptOpensManyFiles(extensionPath: string, scriptName: string) {
+async function runScriptOpensManyFiles(
+  extensionPath: string,
+  scriptName: string
+) {
   const scriptPath = join(extensionPath, "scripts", scriptName)
 
   const cwd = workspace.workspaceFolders![0].uri.fsPath

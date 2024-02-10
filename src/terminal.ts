@@ -16,11 +16,11 @@ const TMP_FILES_FOLDER = "/tmp"
 /**
  * A terminal wrapper that runs a single command and returns the output
  * After the command runs, the terminal is closed
- * 
+ *
  * Since vscode doesn't provide an api to get the output of a terminal
  * this class uses a hack to get the output of a terminal by writing the output
  * to a file and then reading it
- * 
+ *
  * Correctly handles the terminal close action by the user
  * (focus the previous editor and clean up the tmp files)
  */
@@ -50,7 +50,7 @@ export class SingleCommandTerminal {
     // fix the first time opening the terminal it doens't get focus
     this.disposables.push(
       window.onDidChangeTerminalState((e) => {
-        if(e.name === this.terminal.name && e.state.isInteractedWith) {
+        if (e.name === this.terminal.name && e.state.isInteractedWith) {
           window.activeTerminal?.show()
         }
       })
@@ -60,10 +60,7 @@ export class SingleCommandTerminal {
 
     // hack to grab the command output while vscode
     // doesn't provide an api for it
-    this.outputFile = join(
-      TMP_FILES_FOLDER,
-      `tmp-output-${this.terminalId}`
-    )
+    this.outputFile = join(TMP_FILES_FOLDER, `tmp-output-${this.terminalId}`)
     this.doneFile = join(TMP_FILES_FOLDER, `tmp-done-${this.terminalId}`)
   }
 
@@ -95,6 +92,22 @@ export class SingleCommandTerminal {
       })
   }
 
+  /**
+   * Run a command but don't return any output
+   * Waits for completion
+   */
+  public async runWithoutOutput(cmd: string) {
+    await fs.writeFile(this.doneFile, "")
+    this.terminal.sendText(`${cmd}; echo "done" > ${this.doneFile}`, true)
+
+    this.terminal.show()
+
+    return waitForDoneFile(this.doneFile).finally(() => {
+      // close the terminal after running the command
+      this.terminal.dispose()
+    })
+  }
+
   public dispose() {
     this.terminal.dispose()
     this.disposables.forEach((d) => d.dispose())
@@ -121,4 +134,14 @@ async function waitForFileUpdate(
   }
 
   return ""
+}
+
+async function waitForDoneFile(doneFile: string): Promise<void> {
+  const watcher = fs.watch(doneFile)
+
+  for await (const _ of watcher) {
+    return
+  }
+
+  return
 }

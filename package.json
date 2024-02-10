@@ -35,6 +35,10 @@
       {
         "title": "florencio.lazygit",
         "command": "florencio.lazygit"
+      },
+      {
+        "title": "florencio.fx",
+        "command": "florencio.fx"
       }
     ]
   },

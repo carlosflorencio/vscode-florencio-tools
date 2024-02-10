@@ -9,6 +9,8 @@ VSCode extension with some behaviours I was missing from neovim.
 - Telescope: Find in files
 - Lazygit
 - Jump to editor diagnostics faster
+- Improved peek experience by auto closing + removing selection
+- fx command to navigate a json file
 
 ## Requirements
 
