@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-git diff --name-only | fzf --reverse -m \
+# staged and unstaged files
+(git diff --name-only; git diff --name-only --cached) | sort -u  | fzf --reverse -m \
     --preview 'bat --style plain,changes,header --color=always {}' \
     --preview-window '~3' \
     --bind="j:down" \
