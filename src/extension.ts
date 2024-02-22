@@ -1,6 +1,6 @@
 import { goToDiagnostic } from "./diagnostics"
 import { registerEditorAlwaysPresent } from "./editor-always"
-import { registerAutoSidebar } from "./editors"
+import { registerAutoSidebar } from "./auto-sidebar"
 import { peekComplete } from "./peek"
 import {
   lazyGit,
@@ -11,6 +11,9 @@ import {
 } from "./terminal-commands"
 import { DiagnosticSeverity, ExtensionContext, commands } from "vscode"
 
+/**
+ * Register all commands and functionality
+ */
 export function activate(context: ExtensionContext) {
   // commands
   context.subscriptions.push(
@@ -34,7 +37,7 @@ export function activate(context: ExtensionContext) {
     })
   )
 
-  // jump to diagnostics
+  // jump to diagnostics commands
   context.subscriptions.push(
     commands.registerCommand("florencio.goToNextError", async () => {
       await goToDiagnostic(DiagnosticSeverity.Error, "next")

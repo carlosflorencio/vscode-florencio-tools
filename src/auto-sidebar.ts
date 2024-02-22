@@ -24,12 +24,12 @@ export async function autoManageSidebar() {
 }
 
 export function registerAutoSidebar(context: ExtensionContext) {
-  if (!config.autoSidebarEnabled()) {
-    return
-  }
-
   context.subscriptions.push(
     window.onDidChangeVisibleTextEditors(async () => {
+      if (!config.autoSidebarEnabled()) {
+        return
+      }
+
       await autoManageSidebar()
     })
   )

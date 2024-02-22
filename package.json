@@ -2,7 +2,7 @@
   "name": "vscode-florencio-tools",
   "displayName": "vscode-florencio-tools",
   "description": "Some behaviours I was missing from neovim",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "publisher": "florencio",
   "repository": {
     "type": "git",
