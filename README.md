@@ -11,6 +11,7 @@ VSCode extension with some behaviours I was missing from neovim.
 - Jump to editor diagnostics faster
 - Improved peek experience by auto closing + removing selection
 - fx command to navigate a json file
+- Doesn't let vscode close the last editor, opens `vsnetrw` to navigate the fs and allow vim commands
 
 ## Requirements
 
