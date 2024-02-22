@@ -1,12 +1,15 @@
-import { autoCloseSidebar, goToDiagnostic } from "./editors"
+import { goToDiagnostic } from "./diagnostics"
+import { registerEditorAlwaysPresent } from "./editor-always"
+import { registerAutoSidebar } from "./editors"
 import { peekComplete } from "./peek"
-import { lazyGit, openChangedFiles, openFile, runCommandForCurrentFile, searchInFiles } from "./terminal-commands"
 import {
-  DiagnosticSeverity,
-  ExtensionContext,
-  commands,
-  window,
-} from "vscode"
+  lazyGit,
+  openChangedFiles,
+  openFile,
+  runCommandForCurrentFile,
+  searchInFiles,
+} from "./terminal-commands"
+import { DiagnosticSeverity, ExtensionContext, commands } from "vscode"
 
 export function activate(context: ExtensionContext) {
   // commands
@@ -47,12 +50,7 @@ export function activate(context: ExtensionContext) {
     })
   )
 
-  // events
-  // TODO: change this event to when an editor tab group is open or closed
-  // TODO: add config to enable/disable this feature
-  context.subscriptions.push(
-    window.onDidChangeVisibleTextEditors(async () => {
-      await autoCloseSidebar()
-    })
-  )
+  // Other functionality
+  registerAutoSidebar(context)
+  registerEditorAlwaysPresent(context)
 }

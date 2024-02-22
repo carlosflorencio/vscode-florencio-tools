@@ -2,7 +2,7 @@
   "name": "vscode-florencio-tools",
   "displayName": "vscode-florencio-tools",
   "description": "Some behaviours I was missing from neovim",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "florencio",
   "repository": {
     "type": "git",
@@ -19,6 +19,21 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "florencio",
+      "properties": {
+        "florencio.editorAlwaysPresent": {
+          "description": "When the last editor closes, it will open vsnetrw",
+          "type": "boolean",
+          "default": true
+        },
+        "florencio.autoSidebar": {
+          "description": "When opening an editor split, the sidebar will close and when closing the editor split, the sidebar will open",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
     "commands": [
       {
         "title": "florencio.openFiles: Using ripgrep and fzf",
