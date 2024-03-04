@@ -5,4 +5,5 @@ rg --files | fzf --reverse -m \
     --preview-window '~3' \
     --bind ctrl-j:preview-down,ctrl-k:preview-up \
     --bind "ctrl-a:select-all" \
+    --bind "ctrl-v:execute(echo {} vsplit)+abort" \
     --bind ctrl-d:preview-page-down,ctrl-u:preview-page-up

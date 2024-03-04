@@ -13,6 +13,7 @@ INITIAL_QUERY="${*:-}"
     --bind "ctrl-j:preview-down,ctrl-k:preview-up" \
     --bind "ctrl-d:preview-page-down,ctrl-u:preview-page-up" \
     --bind "ctrl-a:select-all" \
+    --bind "ctrl-v:execute(echo {} vsplit)+abort" \
     --color "hl:-1:underline,hl+:-1:underline:reverse" \
     --prompt '1. ripgrep> ' \
     --delimiter : \

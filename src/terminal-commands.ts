@@ -1,4 +1,4 @@
-import { workspace, commands, window, Uri, Range } from "vscode"
+import { workspace, commands, window, Uri, Range, ViewColumn } from "vscode"
 import { SingleCommandTerminal } from "./terminal"
 import { join } from "path"
 
@@ -73,6 +73,7 @@ export async function searchInFiles(extensionPath: string) {
       await window.showTextDocument(doc, {
         preview: result.length === 1,
         selection: new Range(line - 1, col - 1, line - 1, col - 1),
+        viewColumn: r.endsWith("vsplit") ? ViewColumn.Beside : undefined,
       })
     }
   } else {
@@ -94,8 +95,8 @@ export async function runCommandForCurrentFile(command: string) {
     window.showInformationMessage("Not a local workspace folder")
     return
   }
-  
-  if(!command) {
+
+  if (!command) {
     window.showInformationMessage("No command provided")
     return
   }
@@ -181,12 +182,23 @@ async function runScriptOpensManyFiles(
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
 
   if (result.length > 0) {
-    const filesToOpen = result.map((f) => Uri.file(join(cwd, f)))
+    let split = false
+    const filesToOpen = result.map((f) => {
+      let file = f
+      if (file.endsWith(" vsplit")) {
+        split = true
+        file = file.replace(" vsplit", "").trim()
+      }
+      return Uri.file(join(cwd, file))
+    })
     const promises = filesToOpen.map((f) => workspace.openTextDocument(f))
     const docs = await Promise.all(promises)
 
     for (const doc of docs) {
-      await window.showTextDocument(doc, { preview: docs.length === 1 })
+      await window.showTextDocument(doc, {
+        preview: docs.length === 1,
+        viewColumn: split ? ViewColumn.Beside : undefined,
+      })
     }
   } else {
     // Focus the previous editor
