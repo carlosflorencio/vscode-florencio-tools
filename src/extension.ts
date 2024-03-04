@@ -26,6 +26,9 @@ export function activate(context: ExtensionContext) {
     commands.registerCommand("florencio.searchInFiles", async () => {
       await searchInFiles(context.extensionPath)
     }),
+    commands.registerCommand("florencio.searchInFilesEditorCWD", async () => {
+      await searchInFiles(context.extensionPath, true)
+    }),
     commands.registerCommand("florencio.lazygit", async () => {
       await lazyGit()
     }),

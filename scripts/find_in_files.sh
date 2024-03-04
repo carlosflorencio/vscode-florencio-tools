@@ -2,9 +2,16 @@
 
 CURRENT_FOLDER_PATH=$(dirname "$0")
 
+HEADER="/ CTRL-R (ripgrep mode) / CTRL-F (fzf mode) /"
+
+if [ $# -eq 1 ]; then
+    cd "$1" || exit 1
+    HEADER="/ $1 CTRL-R (ripgrep mode) / CTRL-F (fzf mode) /"
+fi
+
 rm -f /tmp/rg-fzf-{r,f}
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
-INITIAL_QUERY="${*:-}"
+INITIAL_QUERY=""
 : | fzf -m --ansi --disabled --query "$INITIAL_QUERY" \
     --bind "start:reload($RG_PREFIX {q})+unbind(ctrl-r)" \
     --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
@@ -17,7 +24,7 @@ INITIAL_QUERY="${*:-}"
     --color "hl:-1:underline,hl+:-1:underline:reverse" \
     --prompt '1. ripgrep> ' \
     --delimiter : \
-    --header '/ CTRL-R (ripgrep mode) / CTRL-F (fzf mode) /' \
+    --header "$HEADER" \
     --preview "$CURRENT_FOLDER_PATH/fzf-bat-preview-here.sh {1} {2}" \
     --preview-window '~3' \
     --reverse

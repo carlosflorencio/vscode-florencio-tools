@@ -41,7 +41,10 @@ export async function openChangedFiles(extensionPath: string) {
  *
  * Opens as an editor terminal
  */
-export async function searchInFiles(extensionPath: string) {
+export async function searchInFiles(
+  extensionPath: string,
+  editorCWD: boolean = false
+) {
   if (!isLocalWorkspaceFolder()) {
     commands.executeCommand("workbench.action.experimental.quickTextSearch")
     return
@@ -49,14 +52,24 @@ export async function searchInFiles(extensionPath: string) {
 
   const scriptPath = join(extensionPath, "scripts", "find_in_files.sh")
 
-  const cwd = workspace.workspaceFolders![0].uri.fsPath
+  let cwd = workspace.workspaceFolders![0].uri.fsPath
   const previousEditor = window.activeTextEditor
 
   const terminal = new SingleCommandTerminal({
     name: "searchInFiles",
   })
 
-  const cmd = `sh ${scriptPath}`
+  let cmd = `sh ${scriptPath}`
+
+  if (editorCWD) {
+    // base folder of the current open editor
+    let currentEditorFilePath = window.activeTextEditor?.document.fileName
+
+    if (currentEditorFilePath) {
+      cwd = currentEditorFilePath?.split("/").slice(0, -1).join("/")
+      cmd += ` ${cwd}`
+    }
+  }
 
   await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
   const result = await terminal.run(cmd.trim())
