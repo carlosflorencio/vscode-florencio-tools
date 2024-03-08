@@ -7,6 +7,12 @@ export default {
 
     return Boolean(isEnabled)
   },
+  editorAutoWidthEnabled: () => {
+    const config = getConfig()
+    const isEnabled = config.get<boolean>("editorAutoWidth") 
+
+    return Boolean(isEnabled)
+  },
   autoSidebarEnabled: () => {
     const config = getConfig()
     const isEnabled = config.get<boolean>("autoSidebar") 

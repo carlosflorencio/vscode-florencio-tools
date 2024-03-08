@@ -9,7 +9,11 @@ import {
   runCommandForCurrentFile,
   searchInFiles,
 } from "./terminal-commands"
-import { DiagnosticSeverity, ExtensionContext, commands } from "vscode"
+import {
+  DiagnosticSeverity,
+  ExtensionContext, commands
+} from "vscode"
+import { registerAutoEditorWidth } from "./auto-editor-width"
 
 /**
  * Register all commands and functionality
@@ -59,4 +63,5 @@ export function activate(context: ExtensionContext) {
   // Other functionality
   registerAutoSidebar(context)
   registerEditorAlwaysPresent(context)
+  registerAutoEditorWidth(context)
 }
