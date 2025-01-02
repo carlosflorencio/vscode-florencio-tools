@@ -31,7 +31,6 @@ export function registerAutoEditorWidth(context: ExtensionContext) {
   context.subscriptions.push(
     window.onDidChangeActiveTextEditor(async (editor) => {
       if (!editor) {
-        await window.showInformationMessage("No active editor")
         return
       }
 
