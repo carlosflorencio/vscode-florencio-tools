@@ -1,26 +1,26 @@
-import { workspace } from "vscode"
+import { workspace } from "vscode";
 
 export default {
   editorAlwaysPresentEnabled: () => {
-    const config = getConfig()
-    const isEnabled = config.get<boolean>("editorAlwaysPresent") 
+    const config = getConfig();
+    const isEnabled = config.get<boolean>("editorAlwaysPresent");
 
-    return Boolean(isEnabled)
+    return Boolean(isEnabled);
   },
   editorAutoWidthEnabled: () => {
-    const config = getConfig()
-    const isEnabled = config.get<boolean>("editorAutoWidth") 
+    const config = getConfig();
+    const isEnabled = config.get<boolean>("editorAutoWidth");
 
-    return Boolean(isEnabled)
+    return Boolean(isEnabled);
   },
   autoSidebarEnabled: () => {
-    const config = getConfig()
-    const isEnabled = config.get<boolean>("autoSidebar") 
+    const config = getConfig();
+    const isEnabled = config.get<boolean>("autoSidebar");
 
-    return Boolean(isEnabled)
+    return Boolean(isEnabled);
   },
-}
+};
 
 function getConfig() {
-    return workspace.getConfiguration("florencio")
+  return workspace.getConfiguration("florencio");
 }

@@ -1,4 +1,4 @@
-import { commands, window, Disposable } from "vscode"
+import { commands, window, Disposable } from "vscode";
 
 /**
  * This function removes the text selection after opening an editor from the peek view
@@ -20,11 +20,11 @@ export async function peekComplete() {
    * This listener is used to remove the text selection after opening an editor
    * When the peekComplete() is called, the current activeEditor is still the previous one
    */
-  let disposable: Disposable | undefined
+  let disposable: Disposable | undefined;
   disposable = window.onDidChangeActiveTextEditor(async (editor) => {
-    await commands.executeCommand("cancelSelection")
+    await commands.executeCommand("cancelSelection");
 
     // remove this listener
-    disposable?.dispose()
-  })
+    disposable?.dispose();
+  });
 }

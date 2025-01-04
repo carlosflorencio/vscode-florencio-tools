@@ -2,7 +2,7 @@
   "name": "vscode-florencio-tools",
   "displayName": "vscode-florencio-tools",
   "description": "Some behaviours I was missing from neovim",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "publisher": "florencio",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "prettier": {},
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
@@ -87,6 +88,7 @@
     "@vscode/test-electron": "^2.3.8",
     "copy-webpack-plugin": "^12.0.2",
     "eslint": "^8.56.0",
+    "prettier": "3.4.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack": "^5.89.0",

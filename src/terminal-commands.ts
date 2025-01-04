@@ -1,6 +1,6 @@
-import { workspace, commands, window, Uri, Range, ViewColumn } from "vscode"
-import { SingleCommandTerminal } from "./terminal"
-import { join } from "path"
+import { workspace, commands, window, Uri, Range, ViewColumn } from "vscode";
+import { SingleCommandTerminal } from "./terminal";
+import { join } from "path";
 
 /**
  * Open a fuzzy finder (rg + fzf) to open files
@@ -11,11 +11,11 @@ import { join } from "path"
  */
 export async function openFile(extensionPath: string) {
   if (!isLocalWorkspaceFolder()) {
-    commands.executeCommand("workbench.action.quickOpen")
-    return
+    commands.executeCommand("workbench.action.quickOpen");
+    return;
   }
 
-  return runScriptOpensManyFiles(extensionPath, "find_files.sh")
+  return runScriptOpensManyFiles(extensionPath, "find_files.sh");
 }
 
 /**
@@ -28,10 +28,10 @@ export async function openFile(extensionPath: string) {
 export async function openChangedFiles(extensionPath: string) {
   if (!isLocalWorkspaceFolder()) {
     // no equivalent fallback command
-    return
+    return;
   }
 
-  return runScriptOpensManyFiles(extensionPath, "find_files_git.sh")
+  return runScriptOpensManyFiles(extensionPath, "find_files_git.sh");
 }
 
 /**
@@ -43,59 +43,59 @@ export async function openChangedFiles(extensionPath: string) {
  */
 export async function searchInFiles(
   extensionPath: string,
-  editorCWD: boolean = false
+  editorCWD: boolean = false,
 ) {
   if (!isLocalWorkspaceFolder()) {
-    commands.executeCommand("workbench.action.experimental.quickTextSearch")
-    return
+    commands.executeCommand("workbench.action.experimental.quickTextSearch");
+    return;
   }
 
-  const scriptPath = join(extensionPath, "scripts", "find_in_files.sh")
+  const scriptPath = join(extensionPath, "scripts", "find_in_files.sh");
 
-  let cwd = workspace.workspaceFolders![0].uri.fsPath
-  const previousEditor = window.activeTextEditor
+  let cwd = workspace.workspaceFolders![0].uri.fsPath;
+  const previousEditor = window.activeTextEditor;
 
   const terminal = new SingleCommandTerminal({
     name: "searchInFiles",
-  })
+  });
 
-  let cmd = `sh ${scriptPath}`
+  let cmd = `sh ${scriptPath}`;
 
   if (editorCWD) {
     // base folder of the current open editor
-    let currentEditorFilePath = window.activeTextEditor?.document.fileName
+    let currentEditorFilePath = window.activeTextEditor?.document.fileName;
 
     if (currentEditorFilePath) {
-      cwd = currentEditorFilePath?.split("/").slice(0, -1).join("/")
-      cmd += ` ${cwd}`
+      cwd = currentEditorFilePath?.split("/").slice(0, -1).join("/");
+      cmd += ` ${cwd}`;
     }
   }
 
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
-  const result = await terminal.run(cmd.trim())
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
+  const result = await terminal.run(cmd.trim());
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
 
   if (result.length > 0) {
     // open files
     for (const r of result) {
-      const parts = r.split(":")
-      const file = parts[0]
-      const line = Number(parts[1])
-      const col = Number(parts[2])
-      const doc = await workspace.openTextDocument(Uri.file(join(cwd, file)))
+      const parts = r.split(":");
+      const file = parts[0];
+      const line = Number(parts[1]);
+      const col = Number(parts[2]);
+      const doc = await workspace.openTextDocument(Uri.file(join(cwd, file)));
       await window.showTextDocument(doc, {
         preview: result.length === 1,
         selection: new Range(line - 1, col - 1, line - 1, col - 1),
         viewColumn: r.endsWith("vsplit") ? ViewColumn.Beside : undefined,
-      })
+      });
     }
   } else {
     // Focus the previous editor
     if (previousEditor) {
       await window.showTextDocument(
         previousEditor.document,
-        previousEditor.viewColumn
-      )
+        previousEditor.viewColumn,
+      );
     }
   }
 }
@@ -105,33 +105,33 @@ export async function searchInFiles(
  */
 export async function runCommandForCurrentFile(command: string) {
   if (!isLocalWorkspaceFolder()) {
-    window.showInformationMessage("Not a local workspace folder")
-    return
+    window.showInformationMessage("Not a local workspace folder");
+    return;
   }
 
   if (!command) {
-    window.showInformationMessage("No command provided")
-    return
+    window.showInformationMessage("No command provided");
+    return;
   }
 
-  const currentEditorFilePath = window.activeTextEditor?.document.fileName
+  const currentEditorFilePath = window.activeTextEditor?.document.fileName;
 
   if (!currentEditorFilePath) {
-    window.showInformationMessage("No active file")
-    return
+    window.showInformationMessage("No active file");
+    return;
   }
 
-  const previousEditor = window.activeTextEditor
+  const previousEditor = window.activeTextEditor;
 
   const terminal = new SingleCommandTerminal({
     name: "runCommandForCurrentFile",
-  })
+  });
 
-  const cmd = `${command} ${currentEditorFilePath}`
+  const cmd = `${command} ${currentEditorFilePath}`;
 
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
-  await terminal.runWithoutOutput(cmd.trim())
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
+  await terminal.runWithoutOutput(cmd.trim());
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
 }
 
 /**
@@ -139,36 +139,36 @@ export async function runCommandForCurrentFile(command: string) {
  */
 export async function lazyGit() {
   if (!isLocalWorkspaceFolder()) {
-    commands.executeCommand("workbench.view.scm")
-    return
+    commands.executeCommand("workbench.view.scm");
+    return;
   }
 
-  const previousEditor = window.activeTextEditor
+  const previousEditor = window.activeTextEditor;
 
   const terminal = new SingleCommandTerminal({
     name: "lazygit",
-  })
+  });
 
   // for some reason, sometimes lazygit doesn't find the right config file
   // let's force it
-  const config = "~/.config/lazygit/config.yml"
-  const cmd = `lazygit -ucf ${config}`
+  const config = "~/.config/lazygit/config.yml";
+  const cmd = `lazygit -ucf ${config}`;
 
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
 
-  await terminal.run(cmd)
+  await terminal.run(cmd);
 
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
 
   // refresh vscode git file status (modified, committed, etc..)
-  await commands.executeCommand("git.refresh")
+  await commands.executeCommand("git.refresh");
 
   // Focus the previous editor
   if (previousEditor) {
     await window.showTextDocument(
       previousEditor.document,
-      previousEditor.viewColumn
-    )
+      previousEditor.viewColumn,
+    );
   }
 }
 
@@ -177,49 +177,49 @@ export async function lazyGit() {
  */
 async function runScriptOpensManyFiles(
   extensionPath: string,
-  scriptName: string
+  scriptName: string,
 ) {
-  const scriptPath = join(extensionPath, "scripts", scriptName)
+  const scriptPath = join(extensionPath, "scripts", scriptName);
 
-  const cwd = workspace.workspaceFolders![0].uri.fsPath
-  const previousEditor = window.activeTextEditor
+  const cwd = workspace.workspaceFolders![0].uri.fsPath;
+  const previousEditor = window.activeTextEditor;
 
   const terminal = new SingleCommandTerminal({
     name: `openFiles - ${scriptName}`,
-  })
+  });
 
-  const cmd = `sh ${scriptPath}`
+  const cmd = `sh ${scriptPath}`;
 
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
-  const result = await terminal.run(cmd.trim())
-  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup")
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
+  const result = await terminal.run(cmd.trim());
+  await commands.executeCommand("workbench.action.toggleMaximizeEditorGroup");
 
   if (result.length > 0) {
-    let split = false
+    let split = false;
     const filesToOpen = result.map((f) => {
-      let file = f
+      let file = f;
       if (file.endsWith(" vsplit")) {
-        split = true
-        file = file.replace(" vsplit", "").trim()
+        split = true;
+        file = file.replace(" vsplit", "").trim();
       }
-      return Uri.file(join(cwd, file))
-    })
-    const promises = filesToOpen.map((f) => workspace.openTextDocument(f))
-    const docs = await Promise.all(promises)
+      return Uri.file(join(cwd, file));
+    });
+    const promises = filesToOpen.map((f) => workspace.openTextDocument(f));
+    const docs = await Promise.all(promises);
 
     for (const doc of docs) {
       await window.showTextDocument(doc, {
         preview: docs.length === 1,
         viewColumn: split ? ViewColumn.Beside : undefined,
-      })
+      });
     }
   } else {
     // Focus the previous editor
     if (previousEditor) {
       await window.showTextDocument(
         previousEditor.document,
-        previousEditor.viewColumn
-      )
+        previousEditor.viewColumn,
+      );
     }
   }
 }
@@ -230,9 +230,9 @@ async function runScriptOpensManyFiles(
  */
 function isLocalWorkspaceFolder() {
   if (workspace.workspaceFolders?.length === 0) {
-    window.showErrorMessage("No workspace folder found")
-    return false
+    window.showErrorMessage("No workspace folder found");
+    return false;
   }
 
-  return workspace.workspaceFolders?.[0].uri.scheme === "file"
+  return workspace.workspaceFolders?.[0].uri.scheme === "file";
 }

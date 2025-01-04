@@ -1,5 +1,5 @@
-import { window, commands, ExtensionContext } from "vscode"
-import config from "./config"
+import { window, commands, ExtensionContext } from "vscode";
+import config from "./config";
 
 /**
  * When closing the last editor tab, open a new one to prevent vscode from not having any editors
@@ -9,33 +9,33 @@ import config from "./config"
  */
 export function registerEditorAlwaysPresent(context: ExtensionContext) {
   if (!config.editorAlwaysPresentEnabled()) {
-    return
+    return;
   }
 
   // startup without any editor opened?
   if (openTabs() === 0) {
-    openDefaultEditor()
+    openDefaultEditor();
   }
 
   context.subscriptions.push(
     window.onDidChangeVisibleTextEditors(async (editors) => {
       if (!config.editorAlwaysPresentEnabled()) {
-        return
+        return;
       }
 
       // closing last text editor
       if (openTabs() === 0 && editors.length === 0) {
-        await openDefaultEditor()
-        return
+        await openDefaultEditor();
+        return;
       }
-    })
-  )
+    }),
+  );
 }
 
 function openTabs() {
-  return window.tabGroups.all.map((g) => g.tabs).flat().length
+  return window.tabGroups.all.map((g) => g.tabs).flat().length;
 }
 
 function openDefaultEditor() {
-  return commands.executeCommand("vsnetrw.open")
+  return commands.executeCommand("vsnetrw.open");
 }
