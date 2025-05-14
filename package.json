@@ -64,6 +64,10 @@
       {
         "title": "florencio.fx",
         "command": "florencio.fx"
+      },
+      {
+        "title": "florencio.weztermLazyGit",
+        "command": "florencio.weztermLazyGit"
       }
     ]
   },

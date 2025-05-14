@@ -9,8 +9,15 @@ import {
   runCommandForCurrentFile,
   searchInFiles,
 } from "./terminal-commands";
-import { DiagnosticSeverity, ExtensionContext, commands } from "vscode";
+import {
+  DiagnosticSeverity,
+  ExtensionContext,
+  commands,
+  window,
+  workspace,
+} from "vscode";
 import { registerAutoEditorWidth } from "./auto-editor-width";
+import { exec } from "child_process";
 
 /**
  * Register all commands and functionality
@@ -38,6 +45,36 @@ export function activate(context: ExtensionContext) {
     }),
     commands.registerCommand("florencio.fx", async () => {
       await runCommandForCurrentFile("fx");
+    }),
+
+    commands.registerCommand("florencio.weztermLazyGit", () => {
+      const workspaceFolder = workspace.workspaceFolders?.[0]?.uri.fsPath;
+
+      let command = "wezterm cli spawn lazygit";
+
+      if (workspaceFolder) {
+        command = `wezterm cli spawn --cwd "${workspaceFolder}" lazygit`;
+      }
+
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          window.showErrorMessage(`Failed to open Lazygit: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          window.showWarningMessage(`Lazygit stderr: ${stderr}`);
+        }
+      });
+
+      // focus
+      exec(
+        "osascript -e 'tell application \"WezTerm\" to activate'",
+        (ascriptError) => {
+          if (ascriptError) {
+            window.showWarningMessage(`Failed to focus WezTerm: ${ascriptError.message}`);
+          }
+        },
+      );
     }),
   );
 
