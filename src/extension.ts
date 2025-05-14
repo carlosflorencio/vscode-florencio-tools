@@ -53,7 +53,8 @@ export function activate(context: ExtensionContext) {
       let command = "wezterm cli spawn lazygit";
 
       if (workspaceFolder) {
-        command = `wezterm cli spawn --cwd "${workspaceFolder}" lazygit`;
+        // focus vscode after closing lazygit
+        command = `wezterm cli spawn --cwd "${workspaceFolder}" -- bash -c 'lazygit ; open -a "Visual Studio Code"'`;
       }
 
       exec(command, (error, stdout, stderr) => {
@@ -66,7 +67,7 @@ export function activate(context: ExtensionContext) {
         }
       });
 
-      // focus
+      // focus wezterm
       exec(
         "osascript -e 'tell application \"WezTerm\" to activate'",
         (ascriptError) => {
