@@ -17,3 +17,10 @@ VSCode extension with some behaviours I was missing from neovim.
 ## Requirements
 
 - fzf, rg, bat, lazygit
+
+## How to publish
+
+- `npm install -g @vscode/vsce`
+- `vsce login florencio` ([Personal Access Token](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token) needed)
+- bump `package.json` version
+- `vsce publish`
